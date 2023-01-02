@@ -1,50 +1,65 @@
-from flask import Flask, render_template, request
+import pandas as pd 
+import numpy as np
+from lightfm.data import Dataset
 import pickle
-import pandas as pd
+from HelperFunctons import *
+from flask import Flask,request,app,render_template
+
+app=Flask(__name__)
+
+#charger les données
+'''df1 = pd.read_csv('ratings.csv')
+df2 = pd.read_csv('movies.csv')
+rating_df = df2.merge(df1, on = 'movieId' ).dropna()
+df = rating_df[['userId','movieId','rating']]
+df4 = rating_df[['userId','movieId','rating','title','genres']]
+train = pickle.load(open("train",'rb'))'''
+
+#charger les 2 model
+model_2 = pickle.load(open("model.pkl",'rb'))
+# model_1= pickle.load(open("model1.pkl",'rb'))
 
 
-app = Flask(__name__)
-model = pickle.load(open("catboost_model-2.pkl", "rb"))
+# Preparation des données et paramétres pour le model_2
+uf = [] 
+col = ['movieId']*len(df4['movieId'].unique()) + ['rating']*len(df4['rating'].unique()) + ['title']*len(df4['title'].unique()) + ['genres']*len(df4['genres'].unique()) 
+unique_f1 = list(df4['movieId'].unique()) + list(df4['rating'].unique()) + list(df4['title'].unique()) + list(df4['genres'].unique()) 
+#print('f1:', unique_f1)
+for x,y in zip(col, unique_f1):
+    res = str( x)+ ":" +str(y)
+    uf.append(res)
+    #print(res)
+                   
+# Using the helper function to generate user features in proper format for ALL users
+ad_subset = df4[['movieId','rating','title','genres']] 
+ad_list = [list(x) for x in ad_subset.values]
+feature_list = []
+for item in ad_list:
+    feature_list.append(feature_colon_value(item))
+#print(f'Final output: {feature_list}')
 
+data = Dataset()
+#data.fit(df.userId.unique(), df.movieId.unique())
+data.fit( 
+        df4['userId'].unique(), 
+        df4.movieId.unique(), # tous les éléments
+        user_features = uf # fonctionnalités utilisateur supplémentaires
+ )
 
-def model_pred(features):
-    test_data = pd.DataFrame([features])
-    prediction = model.predict(test_data)
-    return int(prediction[0])
+user_id_map, user_feature_map, movie_id_map, movie_feature_map = data.mapping()
 
 
 @app.route("/", methods=["GET"])
 def Home():
     return render_template("index.html")
 
-
-@app.route("/predict", methods=["POST"])
+@app.route('/predict',methods=['POST'])
 def predict():
-    if request.method == "POST":
-        Age = int(request.form["Age"])
-        RestingBP = int(request.form["RestingBP"])
-        Cholesterol = int(request.form["Cholesterol"])
-        Oldpeak = float(request.form["Oldpeak"])
-        FastingBS = int(request.form["FastingBS"])
-        MaxHR = int(request.form["MaxHR"])
-        prediction = model.predict(
-            [[Age, RestingBP, Cholesterol, FastingBS, MaxHR, Oldpeak]]
-        )
+    user=int(request.form['user_id'])
+    recommendation=recommend(model_2,user)
+    return render_template("index.html",prediction_text=recommendation[0],prediction_text2=recommendation[1])
 
-        if prediction[0] == 1:
-            return render_template(
-                "index.html",
-                prediction_text="Kindly make an appointment with the doctor!",
-            )
-
-        else:
-            return render_template(
-                "index.html", prediction_text="You are well. No worries :)"
-            )
-
-    else:
-        return render_template("index.html")
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(debug=True,host='0.0.0.0', port=5000)

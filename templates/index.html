@@ -1,154 +1,56 @@
 <!DOCTYPE html>
-<html lang="en">
+<html >
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8">
+  <title>ML API</title>
+  <link href='https://fonts.googleapis.com/css?family=Pacifico' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Arimo' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Hind:300' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Open+Sans+Condensed:300' rel='stylesheet' type='text/css'>
+
+  
 </head>
 
 <body>
+ <div class="login">
+	<h1>Systéme de recommendation de film pour un utilisateur </h1>
 
-    <div style="color:blue">
-        <form action="{{ url_for('predict')}}" method="post">
-            <h2>Predictive Analysis</h2>
-            <h3>Age</h3><input id="first" name="Age" type="number " required="required">
-            <h3>RestingBP(100-200)</h3><input id="second" name="RestingBP" required="required">
-            <h3>Cholesterol (100-600)</h3><input id="third" name="Cholesterol" required="required">
-            <h3>FastingBS (0 or 1)</h3><input id="fourth" name="FastingBS" required="required">
-            <h3>MaxHR (60-205)</h3><input id="fifth" name="MaxHR" required="required">
-            <h3>Oldpeak (0.0-6.2)</h3><input id="sixth" name="Oldpeak" required="required">
-            <br><br><button id="sub" type="submit ">Result</button>
-            <br>
+     <!-- Main Input For Receiving Query to our ML -->
+    <form action="{{ url_for('predict')}}"method="post">
+      <input type="text" name="user_id" placeholder="User id" required="required" /><br>
+    	
 
-        </form>
+       
 
-        <br><br><h3>{{ prediction_text }}<h3>
-    </div>
+        <button type="submit" class="btn btn-primary btn-block btn-large">Recommender</button>
+    </form>
 
+   <br>
+   <br>
+  
+   
+ </div>
+ <p>Liste de films déja bien noté : </p>
+ <table>
+ {% for e in prediction_text %}
+    <tr>
 
-    <style>
-        body {
-            background-color: lightslategray;
-            text-align: center;
-            padding: 0px;
-        }
+      <td>{{e}}</td>
+    </tr>
         
-        #research {
-            font-size: 18px;
-            width: 100px;
-            height: 23px;
-            top: 23px;
-        }
-        
-        #box {
-            border-radius: 60px;
-            border-color: 45px;
-            border-style: solid;
-            font-family: cursive;
-            text-align: center;
-            background-color: rgb(168, 131, 61);
-            font-size: medium;
-            position: absolute;
-            width: 700px;
-            bottom: 9%;
-            height: 850px;
-            right: 30%;
-            padding: 0px;
-            margin: 0px;
-            font-size: 14px;
-        }
-        
-        #fuel {
-            width: 83px;
-            height: 43px;
-            text-align: center;
-            border-radius: 14px;
-            font-size: 20px;
-        }
-        
-        #fuel:hover {
-            background-color: coral;
-        }
-        
-        #research {
-            width: 99px;
-            height: 43px;
-            text-align: center;
-            border-radius: 14px;
-            font-size: 18px;
-        }
-        
-        #research:hover {
-            background-color: coral;
-        }
-        
-        #resea {
-            width: 99px;
-            height: 43px;
-            text-align: center;
-            border-radius: 14px;
-            font-size: 18px;
-        }
-        
-        #resea:hover {
-            background-color: coral;
-        }
-        
-        #sub {
-            width: 120px;
-            height: 43px;
-            text-align: center;
-            border-radius: 14px;
-            font-size: 18px;
-        }
-        
-        #sub:hover {
-            background-color: darkcyan;
-        }
-        
-        #first {
-            border-radius: 14px;
-            height: 25px;
-            font-size: 20px;
-            text-align: center;
-        }
-        
-        #second {
-            border-radius: 14px;
-            height: 25px;
-            font-size: 20px;
-            text-align: center;
-        }
-        
-        #third {
-            border-radius: 14px;
-            height: 25px;
-            font-size: 20px;
-            text-align: center;
-        }
-        
-        #fourth {
-            border-radius: 14px;
-            height: 25px;
-            font-size: 20px;
-            text-align: center;
-        }
+    {% endfor %}
+  </table>
+  <p>Liste de recommendation:</p>
 
-        #fifth {
-            border-radius: 14px;
-            height: 25px;
-            font-size: 20px;
-            text-align: center;
-        }
-
-        #sixth {
-            border-radius: 14px;
-            height: 25px;
-            font-size: 20px;
-            text-align: center;
-        }
-    </style>
+  <table>
+  {% for e in prediction_text2 %}
+     <tr>
+ 
+       <td>{{e}}</td>
+     </tr>
+         
+     {% endfor %}
+   </table>
 </body>
-
 </html>
