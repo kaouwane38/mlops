@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html >
+
+<head>
+  <meta charset="UTF-8">
+  <title>ML API</title>
+  <link href='https://fonts.googleapis.com/css?family=Pacifico' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Arimo' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Hind:300' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Open+Sans+Condensed:300' rel='stylesheet' type='text/css'>
+
+  
+</head>
+
+<body>
+ <div class="login">
+	<h1>Systéme de recommendation de film pour un utilisateur </h1>
+
+     <!-- Main Input For Receiving Query to our ML -->
+    <form action="{{ url_for('predict')}}"method="post">
+      <input type="text" name="user_id" placeholder="User id" required="required" /><br>
+    	
+
+       
+
+        <button type="submit" class="btn btn-primary btn-block btn-large">Recommender</button>
+    </form>
+
+   <br>
+   <br>
+  
+   
+ </div>
+ <p>Liste de films déja bien noté : </p>
+ <table>
+ {% for e in prediction_text %}
+    <tr>
+
+      <td>{{e}}</td>
+    </tr>
+        
+    {% endfor %}
+  </table>
+  <p>Liste de recommendation:</p>
+
+  <table>
+  {% for e in prediction_text2 %}
+     <tr>
+ 
+       <td>{{e}}</td>
+     </tr>
+         
+     {% endfor %}
+   </table>
+</body>
+</html>
